@@ -10,6 +10,7 @@ import build.pluto.builder.Builder;
 import build.pluto.builder.BuilderFactory;
 import build.pluto.builder.BuilderFactoryFactory;
 import build.pluto.output.None;
+import build.pluto.stamp.LastModifiedStamper;
 
 public class CBuilder extends Builder<CInput,None> {
 	
@@ -25,9 +26,7 @@ public class CBuilder extends Builder<CInput,None> {
 		if (input.getInputFiles() != null && input.getInputFiles().size() > 0 ) {
 			//Hard coded get(0) for single file
 			File target = new File(input.getTargetDir().getAbsolutePath()+"\\"+input.getInputFiles().get(0).getName()) ; 
-			System.out.println("target path : "+target.getAbsolutePath());
-			System.out.println(input.getInputFiles().get(0).getName());
-			//require(input.getInputFiles().get(0), LastModifiedStamper.instance); //Null Pointer exceiption 
+			//require(input.getInputFiles().get(0),LastModifiedStamper.instance); //Null Pointer exceiption 
 			FileCommands.copyFile(input.getInputFiles().get(0), target, StandardCopyOption.COPY_ATTRIBUTES);
 			//provide(target); //Null pointer but still copying the file
 		}
@@ -52,6 +51,9 @@ public class CBuilder extends Builder<CInput,None> {
 
 	@Override
 	public File persistentPath(CInput input) {
+		System.out.println("Target Directory : "+input.getTargetDir());
+		System.out.println("Dep File : "+"compile.c."+ input.getInputFiles().hashCode() +".dep");
+		
 		return new File(input.getTargetDir(), "compile.c."+ input.getInputFiles().hashCode() +".dep");
 	}
 	
