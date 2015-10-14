@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1444827520917
+Build-Jdk: 1.7.0_79
+Built-By: talen
+Bundle-ManifestVersion: 2
+Bundle-Name: build-c
+Bundle-SymbolicName: build.pluto.build-c
+Bundle-Version: 1.1.0.qualifier
+Created-By: Apache Maven Bundle Plugin
+Export-Package: build.pluto.buildc;version="1.1.0"
+Import-Package: build.pluto.builder;version="[1.6,2)",build.pluto.output
+ ;version="[1.6,2)",org.sugarj.common;version="[1.6,2)"
+Originally-Created-By: Maven Integration for Eclipse
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+Tool: Bnd-2.3.0.201405100607

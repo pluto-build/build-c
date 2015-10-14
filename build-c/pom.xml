@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>build-c</artifactId>
-	
+
 	<packaging>jar</packaging>
 
 	<parent>
@@ -11,7 +11,9 @@
 		<version>1.1.0-SNAPSHOT</version>
 		<relativePath></relativePath>
 	</parent>
-	
+	<properties>
+		<runSuite>**/BuildCTestSuit.class</runSuite>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.sugarj</groupId>
@@ -28,7 +30,7 @@
 			<groupId>build.pluto</groupId>
 			<artifactId>pluto</artifactId>
 			<version>1.6.0-SNAPSHOT</version>
-			<scope>runtime</scope>
+			<scope>test</scope>
 			<classifier>tests</classifier>
 		</dependency>
 
@@ -64,4 +66,36 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>build.pluto.buildc.test.simple.SimpleCBuildTest</mainClass>
+					<cleanupDaemonThreads>false</cleanupDaemonThreads>
+				</configuration>
+			</plugin>
+			<!--  <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>${runSuite}</include>
+					</includes>
+				</configuration> 
+			</plugin> -->
+		</plugins>
+	</build>
 </project>

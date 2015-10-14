@@ -10,12 +10,10 @@ import build.pluto.builder.Builder;
 import build.pluto.builder.BuilderFactory;
 import build.pluto.builder.BuilderFactoryFactory;
 import build.pluto.output.None;
-import build.pluto.stamp.LastModifiedStamper;
 
 public class CBuilder extends Builder<CInput,None> {
 	
-	public static final BuilderFactory<CInput, None,CBuilder> factory = BuilderFactoryFactory.of(CBuilder.class, CInput.class);
-
+	public static BuilderFactory<CInput, None, CBuilder> factory = BuilderFactoryFactory.of(CBuilder.class, CInput.class);
 	public CBuilder(CInput input) {
 		super(input);
 		
@@ -23,38 +21,39 @@ public class CBuilder extends Builder<CInput,None> {
 	
 	@Override
 	protected None build(CInput input) throws Throwable {
-		if (input.getInputFiles() != null && input.getInputFiles().size() > 0 ) {
-			//Hard coded get(0) for single file
-			File target = new File(input.getTargetDir().getAbsolutePath()+"\\"+input.getInputFiles().get(0).getName()) ; 
-			//require(input.getInputFiles().get(0),LastModifiedStamper.instance); //Null Pointer exceiption 
-			FileCommands.copyFile(input.getInputFiles().get(0), target, StandardCopyOption.COPY_ATTRIBUTES);
-			//provide(target); //Null pointer but still copying the file
+
+		for (File file : input.getInputFiles()) {
+			File target = new File(input.getTargetDir().getAbsolutePath() + "\\" + file.getName());
+			require(file);
+			FileCommands.copyFile(file, target, StandardCopyOption.COPY_ATTRIBUTES);
+			provide(target);
+
 		}
+
 		return None.val;
 	}
-
-		public static BuildRequest<CInput, None,CBuilder, BuilderFactory<CInput, None, CBuilder>> request(CInput input) {
-			return new BuildRequest<>(factory,input);
-		}
 	@Override
 	protected String description(CInput input) {
 		StringBuilder builder = new StringBuilder();
 		
-		for (File f : input.getInputFiles())
-			builder.append(f.getName()).append(", ");
+			for (File f : input.getInputFiles())
+				builder.append(f.getName()).append(", ");
 		String list = builder.toString();
 		if (!list.isEmpty())
 			list = list.substring(0, list.length() - 2);
 
-		return "Compile C files " + list +"\n";
+		return "Compile C files " + list + "\n";
 	}
+
 
 	@Override
 	public File persistentPath(CInput input) {
-		System.out.println("Target Directory : "+input.getTargetDir());
-		System.out.println("Dep File : "+"compile.c."+ input.getInputFiles().hashCode() +".dep");
-		
 		return new File(input.getTargetDir(), "compile.c."+ input.getInputFiles().hashCode() +".dep");
+		
 	}
+	public static BuildRequest<CInput, None, CBuilder, BuilderFactory<CInput, None, CBuilder>> request(CInput input) {
+		return new BuildRequest<>(factory,input);
+	}
+	
 	
 }

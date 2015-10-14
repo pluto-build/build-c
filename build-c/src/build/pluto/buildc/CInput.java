@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import build.pluto.dependency.IMetaBuildingEnabled;
+
 
 
 public class CInput implements Serializable {
@@ -50,8 +52,6 @@ public class CInput implements Serializable {
 		return "CInput [inputFiles=" + inputFiles + ", targetDir=" + targetDir + ", sourcePath=" + sourcePath
 				 + "]";
 	}
-	
-	
-	
+
 	
 }
