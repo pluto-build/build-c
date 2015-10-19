@@ -1,6 +1,9 @@
 package build.pluto.buildc;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.file.CopyOption;
 import java.nio.file.StandardCopyOption;
 
 import org.sugarj.common.FileCommands;
@@ -24,8 +27,9 @@ public class CBuilder extends Builder<CInput,None> {
 
 		for (File file : input.getInputFiles()) {
 			File target = new File(input.getTargetDir().getAbsolutePath() + "\\" + file.getName());
+			FileCommands.createFile(target);
 			require(file);
-			FileCommands.copyFile(file, target, StandardCopyOption.COPY_ATTRIBUTES);
+			FileCommands.copyFile(file,target,StandardCopyOption.COPY_ATTRIBUTES);
 			provide(target);
 
 		}
@@ -35,8 +39,7 @@ public class CBuilder extends Builder<CInput,None> {
 	@Override
 	protected String description(CInput input) {
 		StringBuilder builder = new StringBuilder();
-		
-			for (File f : input.getInputFiles())
+		for (File f : input.getInputFiles())
 				builder.append(f.getName()).append(", ");
 		String list = builder.toString();
 		if (!list.isEmpty())

@@ -16,7 +16,7 @@ public class SimpleCBuildTest extends ScopedBuildTest {
 	@ScopedPath(value = "")
 	private File sourcePath;
 
-	@ScopedPath(value = "test.c")
+	@ScopedPath(value = "add.c")
 	private File sourceFile;
 
 	@ScopedPath(value = "bin")
