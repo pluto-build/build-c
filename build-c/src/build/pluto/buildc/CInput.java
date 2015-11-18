@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import build.pluto.dependency.IMetaBuildingEnabled;
+import build.pluto.buildc.compiler.CCompiler;
 
 
 
@@ -15,25 +15,22 @@ public class CInput implements Serializable {
 	private static final long serialVersionUID = 6256336102992811823L;
 	private final List<File> inputFiles;
 	private final File targetDir;
-	private final List<File> sourcePath;
+	private final CCompiler compiler;
 
 	
-	public CInput(List<File> inputFiles, File targetDir, List<File> sourcePath) {
-		if (sourcePath == null || sourcePath.isEmpty()) {
-			throw new IllegalArgumentException("Provide at least one source path!");
-		}
-		
+	public CInput(List<File> inputFiles, File targetDir,CCompiler compiler) {
 		List<File> absoluteInputFiles = new ArrayList<>(inputFiles.size());
 		for (File f : inputFiles)
 			absoluteInputFiles.add(f.getAbsoluteFile());
 		this.inputFiles = Collections.unmodifiableList(absoluteInputFiles);
 		this.targetDir = (targetDir != null ? targetDir : new File(".")).getAbsoluteFile();
-		this.sourcePath = sourcePath;
+		
+		this.compiler=compiler;
 		
 	}
 
-	public CInput(File inputFile, File targetDir, File sourcePath) {
-		this(Collections.singletonList(inputFile), targetDir, Collections.singletonList(sourcePath));
+	public CInput(File inputFile, File targetDir, File sourcePath,CCompiler compiler) {
+		this(Collections.singletonList(inputFile), targetDir,compiler);
 	}
 	public List<File> getInputFiles() {
 		return inputFiles;
@@ -43,14 +40,13 @@ public class CInput implements Serializable {
 		return targetDir;
 	}
 
-	public List<File> getSourcePath() {
-		return sourcePath;
+	public CCompiler getCompiler() {
+		return compiler;
 	}
 
 	@Override
 	public String toString() {
-		return "CInput [inputFiles=" + inputFiles + ", targetDir=" + targetDir + ", sourcePath=" + sourcePath
-				 + "]";
+		return "CInput [inputFiles=" + inputFiles + ", targetDir=" + targetDir + "]";
 	}
 
 	

@@ -15,30 +15,11 @@
 		<runSuite>**/BuildCTestSuit.class</runSuite>
 	</properties>
 	<dependencies>
-	 <!-- <dependency>
-			<groupId>org.sugarj</groupId>
-			<artifactId>common</artifactId>
-			<version>1.6.0-SNAPSHOT</version>
-		</dependency>  
 		<dependency>
-			<groupId>build.pluto</groupId>
-			<artifactId>pluto</artifactId>
-			<version>1.6.0-SNAPSHOT</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.0</version>
 		</dependency>
-
-		<dependency>
-			<groupId>build.pluto</groupId>
-			<artifactId>pluto</artifactId>
-			<version>1.6.0-SNAPSHOT</version>
-			<scope>test</scope>
-			<classifier>tests</classifier>
-		</dependency>
-
-		<dependency>
-			<groupId>build.pluto</groupId>
-			<artifactId>pluto-eclipse</artifactId>
-			<version>1.2.1-SNAPSHOT</version>
-		</dependency>-->
 
 		<dependency>
 			<groupId>junit</groupId>

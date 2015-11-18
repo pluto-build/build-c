@@ -12,5 +12,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.sugarj.common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/pluto"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

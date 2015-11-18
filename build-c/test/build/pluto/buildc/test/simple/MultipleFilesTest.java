@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package build.pluto.buildc.test.simple;
 
 import java.io.File;
@@ -13,21 +16,32 @@ import build.pluto.builder.BuildManagers;
 import build.pluto.test.build.ScopedBuildTest;
 import build.pluto.test.build.ScopedPath;
 
-public class SimpleCBuildTest extends ScopedBuildTest {
-
+/**
+ * @author Faisal
+ *
+ */
+public class MultipleFilesTest extends ScopedBuildTest{
 	@ScopedPath(value = "")
 	private File sourcePath;
 
 	@ScopedPath(value = "add.c")
 	private File sourceFile;
 
+	@ScopedPath(value = "foo.c")
+	private File sourceBFile;
+	@ScopedPath(value = "foo1.c")
+	private File sourceCFile;
 	@ScopedPath(value = "bin")
 	private File targetDir;
 
 	@Test
 	public void build() throws IOException {
-		BuildManagers.build(CBuilder.request(new CInput(sourceFile, targetDir, sourcePath, GCCompiler.instance)));
+		ArrayList<File> inputFiles = new ArrayList<>();
+		inputFiles.add(sourceFile);
+		inputFiles.add(sourceBFile);
+		inputFiles.add(sourceCFile);
+		BuildManagers.build(CBuilder.request(new CInput(inputFiles, targetDir, GCCompiler.instance)));
+		
 
 	}
-
 }
