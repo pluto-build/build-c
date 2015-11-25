@@ -2,22 +2,31 @@ package build.pluto.buildc;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.sugarj.common.FileCommands;
 import org.sugarj.common.errors.SourceCodeException;
 import org.sugarj.common.errors.SourceLocation;
 import org.sugarj.common.util.Pair;
 
+import build.pluto.BuildUnit;
 import build.pluto.buildc.compiler.CCompiler;
 import build.pluto.buildc.compiler.CCompiler.CCompilerResult;
 import build.pluto.builder.BuildRequest;
 import build.pluto.builder.Builder;
 import build.pluto.builder.BuilderFactory;
 import build.pluto.builder.BuilderFactoryFactory;
+import build.pluto.dependency.FileRequirement;
 import build.pluto.output.None;
+import build.pluto.stamp.LastModifiedStamper;
+import build.pluto.stamp.Stamper;
 
 public class CBuilder extends Builder<CInput,None> {
 	
@@ -29,21 +38,43 @@ public class CBuilder extends Builder<CInput,None> {
 	
 	@Override
 	protected None build(CInput input) throws Throwable {
-
+		CCompilerResult compilerResult;
+		Map<String,File> prevFiles = new HashMap<>();
 		List<File> inputFiles = new ArrayList<>();
 		File targetDir = input.getTargetDir();
 		CCompiler compiler = input.getCompiler();
 		
+		if (getPreviousBuildUnit()!=null) {
+			BuildUnit<None> unit =  getPreviousBuildUnit();
+			Set<FileRequirement> freq =	 unit.getRequiredFiles();
+			for (FileRequirement fileRequirement : freq) {
+					File file = fileRequirement.file;
+				if (FileCommands.getExtension(file.getName()).equalsIgnoreCase("c") && fileRequirement.isConsistent()) {
+					prevFiles.put(FileCommands.dropExtension(file.getName()),fileRequirement.file);
+					
+				}
+			}
+		}
+		
 		for (File p : input.getInputFiles())
 			if (!inputFiles.contains(p)) {
-				inputFiles.add(p);
-			}
+				File consistentFile = prevFiles.get(FileCommands.dropExtension(p.getName()));
+				//Skip Consistent Files to recompile
+				if (consistentFile!=null) 
+					continue;
+				else
+					inputFiles.add(p);
+				}
 		for (File p : inputFiles)
 			require(p);
 		
-		FileCommands.createDir(targetDir);
-		CCompilerResult compilerResult;
+		if (!Files.exists(targetDir.toPath())) {
+			FileCommands.createDir(targetDir);
+		}
+		
+		
 		try {
+			
 			compilerResult = compiler.compile(inputFiles, targetDir);
 		} catch (SourceCodeException e) {
 			StringBuilder errMsg = new StringBuilder("The following errors occured during compilation:\n");
@@ -57,13 +88,7 @@ public class CBuilder extends Builder<CInput,None> {
 			for (File gen : gens){
 				provide(gen);
 			}
-		//TODO GCC does not need to compile required header files what we should do here 
 		for (File p : compilerResult.getLoadedFiles()) {
-			System.out.println("Required : "+p.getAbsolutePath());
-			switch (FileCommands.getExtension(p)) {
-			case "h":
-				break;
-			}
 			require(p);
 		}
 		return None.val;
@@ -89,5 +114,17 @@ public class CBuilder extends Builder<CInput,None> {
 	public static BuildRequest<CInput, None, CBuilder, BuilderFactory<CInput, None, CBuilder>> request(CInput input) {
 		return new BuildRequest<>(factory,input);
 	}
+
+	@Override
+	protected Stamper defaultStamper() {
+		
+		return LastModifiedStamper.instance;
+	}
 	
+	@Override
+	protected BuildUnit<None> getPreviousBuildUnit() {
+		
+		return super.getPreviousBuildUnit();
+	}
+		
 }
